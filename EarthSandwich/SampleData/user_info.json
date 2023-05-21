@@ -1,0 +1,53 @@
+{
+    "users": [
+      {
+        "id": "1",
+        "name": "John",
+        "location": {
+          "latitude": 37.7749,
+          "longitude": -122.4194
+        }
+      },
+      {
+        "id": "2",
+        "name": "Emily",
+        "location": {
+          "latitude": -33.865,
+          "longitude": 151.2094
+        }
+      },
+      {
+        "id": "3",
+        "name": "David",
+        "location": {
+          "latitude": 51.5074,
+          "longitude": -0.1278
+        }
+      },
+      {
+        "id": "4",
+        "name": "Sophia",
+        "location": {
+          "latitude": -34.6037,
+          "longitude": -58.3816
+        }
+      },
+      {
+        "id": "5",
+        "name": "Michael",
+        "location": {
+          "latitude": 40.7128,
+          "longitude": -74.006
+        }
+      },
+      {
+        "id": "6",
+        "name": "David's buddy",
+        "location": {
+          "latitude": -51.5074,
+          "longitude": 0.1278
+        }
+      }
+    ]
+  }
+  

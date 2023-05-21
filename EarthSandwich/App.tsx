@@ -13,6 +13,7 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  FlatList,
   useColorScheme,
   View,
 } from 'react-native';
@@ -24,6 +25,9 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import userInfo from './SampleData/user_info.json';
+
+
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -55,6 +59,104 @@ function Section({children, title}: SectionProps): JSX.Element {
   );
 }
 
+interface Coordinates {
+  latitude: number;
+  longitude: number;
+}
+
+function areAntipodal(user1: Coordinates, user2: Coordinates): boolean {
+  const user1Antipodal: Coordinates = {
+    latitude: -user1.latitude,
+    longitude: -user1.longitude
+  };
+
+  return (
+    user1Antipodal.latitude === user2.latitude &&
+    user1Antipodal.longitude === user2.longitude
+  );
+}
+
+interface User {
+  id: string;
+  name: string;
+  location: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
+interface UserPair {
+  user1: User;
+  user2: User;
+}
+
+const UserPairsTable: React.FC<{ users: User[] }> = ({ users }) => {
+  const UserPairs: UserPair[] = findAntipodalPairs(users);
+
+  const renderItem = ({ item }: { item: UserPair }) => (
+    <View style={styles.row}>
+      <Text style={styles.cell}>{item.user1.name}</Text>
+      <Text style={styles.cell}>{item.user2.name}</Text>
+    </View>
+  );;
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.headerCell}>User 1</Text>
+        <Text style={styles.headerCell}>User 2</Text>
+      </View>
+      <FlatList
+        data={UserPairs}
+        renderItem={renderItem}
+        keyExtractor={(item, index) => index.toString()}
+      />
+    </View>
+  );
+};
+
+function findAntipodalPairs(users: User[]): UserPair[] {
+  const antipodalPairs: UserPair[] = [];
+
+  for (let i = 0; i < users.length - 1; i++) {
+    for (let j = i + 1; j < users.length; j++) {
+      const userA = users[i];
+      const userB = users[j];
+
+      if (areAntipodal(userA.location, userB.location)) {
+        antipodalPairs.push({ user1: userA, user2: userB });
+      }
+    }
+  }
+
+  return antipodalPairs;
+}
+
+
+
+function DisplayBuddies(): JSX.Element{
+  // goes through the user list
+  // finds user pairs that are antipodal
+  // display pairs
+
+  var antiPodalUsers = findAntipodalPairs(userInfo.users)
+  console.log("AntiPodal Users: ")
+  console.log(antiPodalUsers[0])
+  
+  return(
+
+    <View>
+      <Text>
+        Display Buddies here
+      </Text>
+    {userInfo.users.map(user => (
+      <Section title={user.name} key={user.id}>{user.name}</Section>
+    ))}
+    </View>
+
+  );
+}
+
 function App(): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -68,7 +170,7 @@ function App(): JSX.Element {
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
       />
-      <ScrollView
+      {/* <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
         <Header />
@@ -76,22 +178,16 @@ function App(): JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+            <DisplayBuddies />
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.
           </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
           <LearnMoreLinks />
         </View>
-      </ScrollView>
+      </ScrollView> */}
+
+      <UserPairsTable users={userInfo.users}/>
     </SafeAreaView>
   );
 }
@@ -112,6 +208,33 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    marginBottom: 8,
+  },
+  headerCell: {
+    flex: 1,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    paddingVertical: 8,
+  },
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+    marginBottom: 8,
+  },
+  cell: {
+    flex: 1,
+    textAlign: 'center',
+    paddingVertical: 8,
   },
 });
 
